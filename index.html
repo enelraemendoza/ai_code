@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learner Attendance Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .attendance-form {
+            margin: 20px 0;
+        }
+        .attendance-form select, .attendance-form button {
+            padding: 8px;
+            margin-right: 10px;
+        }
+        .attendance-records {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .attendance-records ul {
+            list-style: none;
+            padding: 0;
+        }
+        .attendance-records li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Learner Attendance Tracker</h1>
+    <div class="attendance-form">
+        <select id="studentSelect">
+            <option value="">Select a student</option>
+        </select>
+        <button onclick="markAttendance('present')">Mark Present</button>
+        <button onclick="markAttendance('absent')">Mark Absent</button>
+    </div>
+    <div class="attendance-records">
+        <h2>Attendance Records</h2>
+        <ul id="attendanceList"></ul>
+    </div>
+
+    <script>
+        // Define the Student class
+        class Student {
+            constructor(name) {
+                this.name = name;
+                this.attendance = []; // Array to store attendance records {date, status}
+            }
+
+            // Method to mark attendance
+            markAttendance(status) {
+                const date = new Date().toLocaleDateString();
+                this.attendance.push({ date, status });
+            }
+
+            // Method to get attendance summary
+            getAttendanceSummary() {
+                const presentCount = this.attendance.filter(record => record.status === 'present').length;
+                const total = this.attendance.length;
+                return `${this.name}: ${presentCount}/${total} sessions present`;
+            }
+        }
+
+        // Initialize students
+        const students = [
+            new Student("Alice"),
+            new Student("Bob"),
+            new Student("Charlie")
+        ];
+
+        // Populate student dropdown
+        const studentSelect = document.getElementById("studentSelect");
+        students.forEach((student, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = student.name;
+            studentSelect.appendChild(option);
+        });
+
+        // Function to mark attendance
+        function markAttendance(status) {
+            const selectedIndex = studentSelect.value;
+            if (selectedIndex === "") {
+                alert("Please select a student.");
+                return;
+            }
+            students[selectedIndex].markAttendance(status);
+            updateAttendanceDisplay();
+        }
+
+        // Function to update attendance display
+        function updateAttendanceDisplay() {
+            const attendanceList = document.getElementById("attendanceList");
+            attendanceList.innerHTML = "";
+            students.forEach(student => {
+                const li = document.createElement("li");
+                li.textContent = student.getAttendanceSummary();
+                attendanceList.appendChild(li);
+            });
+        }
+
+        // Initial display
+        updateAttendanceDisplay();
+    </script>
+</body>
+</html>
